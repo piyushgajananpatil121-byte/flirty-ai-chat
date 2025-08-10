@@ -110,7 +110,6 @@
     transition: background 0.3s ease;
   }
   #setup-screen button:hover {
-    background: var(--msg-user-bg);
     filter: brightness(1.1);
   }
 
@@ -294,7 +293,13 @@
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputs: text })
+        body: JSON.stringify({
+          user: userName,
+          crush: crushName,
+          gender: gender,
+          ageGroup: ageGroup,
+          message: text
+        })
       });
 
       const data = await res.json();
