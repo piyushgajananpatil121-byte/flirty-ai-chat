@@ -1,129 +1,339 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Flirty AI Chat</title>
-  <style>
-    body {
-      background: linear-gradient(135deg, #5a47ab, #2a265f);
-      color: white;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Flirty AI Chat</title>
+<style>
+  :root {
+    --indigo-light: #5c6ac4;
+    --indigo-dark: #2c3e91;
+    --pink-light: #f48fb1;
+    --pink-dark: #ad1457;
+    --blue-light: #4fc3f7;
+    --blue-dark: #1565c0;
+    --text-light: #f0eafc;
+    --text-dark: #1c1f3b;
+    --bg-light: #ede7f6;
+    --bg-dark: #1b1b3a;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--indigo-dark);
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.7s ease;
+    user-select: none;
+  }
+
+  body.theme-boy {
+    --main-bg: var(--blue-dark);
+    --main-bg-light: var(--blue-light);
+    --msg-user-bg: #1976d2;
+    --msg-bot-bg: #90caf9;
+    --text-color: var(--text-light);
+  }
+  body.theme-girl {
+    --main-bg: var(--pink-dark);
+    --main-bg-light: var(--pink-light);
+    --msg-user-bg: #d81b60;
+    --msg-bot-bg: #f48fb1;
+    --text-color: var(--text-light);
+  }
+  body.theme-neutral {
+    --main-bg: var(--indigo-dark);
+    --main-bg-light: var(--indigo-light);
+    --msg-user-bg: #5c6ac4;
+    --msg-bot-bg: #9fa8da;
+    --text-color: var(--text-light);
+  }
+
+  #background-fade {
+    position: fixed;
+    inset: 0;
+    background: var(--main-bg);
+    transition: background 0.7s ease;
+    z-index: -1;
+  }
+
+  #app {
+    background: var(--main-bg-light);
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.25);
+    width: 90vw;
+    max-width: 480px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--text-color);
+  }
+
+  #setup-screen {
+    padding: 20px;
+    flex-shrink: 0;
+  }
+  #setup-screen h2 {
+    margin: 0 0 12px;
+    text-align: center;
+  }
+  #setup-screen label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  #setup-screen input, #setup-screen select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    outline-offset: 2px;
+  }
+  #setup-screen button {
+    width: 100%;
+    background: var(--msg-user-bg);
+    border: none;
+    padding: 12px 0;
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #setup-screen button:hover {
+    background: var(--msg-user-bg);
+    filter: brightness(1.1);
+  }
+
+  #chat-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 12px;
+    background: var(--main-bg);
+  }
+
+  #messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--msg-user-bg) transparent;
+  }
+  #messages::-webkit-scrollbar {
+    width: 6px;
+  }
+  #messages::-webkit-scrollbar-thumb {
+    background-color: var(--msg-user-bg);
+    border-radius: 3px;
+  }
+
+  .message {
+    max-width: 70%;
+    padding: 12px 18px;
+    margin: 8px 0;
+    border-radius: 30px;
+    word-wrap: break-word;
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+  .user-message {
+    align-self: flex-end;
+    background: var(--msg-user-bg);
+    color: var(--text-color);
+    border-bottom-right-radius: 4px;
+  }
+  .bot-message {
+    align-self: flex-start;
+    background: var(--msg-bot-bg);
+    color: var(--text-color);
+    border-bottom-left-radius: 4px;
+  }
+
+  #input-area {
+    display: flex;
+    padding: 10px 12px;
+    background: var(--main-bg-light);
+    border-top: 1px solid rgba(255 255 255 / 0.15);
+  }
+  #input {
+    flex-grow: 1;
+    padding: 10px 16px;
+    font-size: 1.1rem;
+    border-radius: 30px 0 0 30px;
+    border: none;
+    outline-offset: 2px;
+  }
+  #send-btn {
+    padding: 10px 20px;
+    background: var(--msg-user-bg);
+    border: none;
+    color: var(--text-color);
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 0 30px 30px 0;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #send-btn:hover {
+    filter: brightness(1.1);
+  }
+
+  @media (max-width: 500px) {
+    #app {
+      height: 90vh;
+      max-width: 95vw;
     }
-    #chat-container {
-      width: 100%;
-      max-width: 500px;
-      background: #3b2c82;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 0 20px rgba(50, 40, 120, 0.8);
-      display: flex;
-      flex-direction: column;
-      height: 600px;
-    }
-    #messages {
-      flex-grow: 1;
-      overflow-y: auto;
-      margin-bottom: 15px;
-      padding-right: 10px;
-    }
-    .message {
-      margin: 8px 0;
-      padding: 10px 15px;
-      border-radius: 20px;
-      max-width: 75%;
-      word-wrap: break-word;
-    }
-    .user-message {
-      background: #9c8de3;
-      align-self: flex-end;
-    }
-    .bot-message {
-      background: #7d68cc;
-      align-self: flex-start;
-    }
-    #input-container {
-      display: flex;
-    }
-    #input {
-      flex-grow: 1;
-      padding: 10px 15px;
-      border-radius: 20px 0 0 20px;
-      border: none;
-      font-size: 1rem;
-    }
-    #send-btn {
-      background: #a390e8;
-      border: none;
-      padding: 0 20px;
-      cursor: pointer;
-      border-radius: 0 20px 20px 0;
-      font-size: 1rem;
-      color: white;
-      transition: background 0.3s ease;
-    }
-    #send-btn:hover {
-      background: #8172d4;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <h1>Flirty AI Chat</h1>
-  <div id="chat-container">
+<div id="background-fade"></div>
+
+<div id="app">
+  <div id="setup-screen">
+    <h2>Welcome to Flirty AI Chat</h2>
+
+    <label for="user-name">Your Name:</label>
+    <input id="user-name" type="text" placeholder="Enter your name" autocomplete="off" />
+
+    <label for="crush-name">Crush's Name:</label>
+    <input id="crush-name" type="text" placeholder="Enter your crush's name" autocomplete="off" />
+
+    <label for="gender-select">Select Your Gender:</label>
+    <select id="gender-select">
+      <option value="girl">Girl</option>
+      <option value="boy">Boy</option>
+      <option value="neutral">Neutral</option>
+    </select>
+
+    <label for="age-select">Select Your Age Group:</label>
+    <select id="age-select">
+      <option value="teen">Teen (13-19)</option>
+      <option value="young">Young Adult (20-30)</option>
+      <option value="adult">Adult (31-50)</option>
+      <option value="senior">Senior (50+)</option>
+    </select>
+
+    <button id="start-btn">Start Chatting</button>
+  </div>
+
+  <div id="chat-container" style="display:none;">
     <div id="messages"></div>
-    <div id="input-container">
-      <input type="text" id="input" placeholder="Say something flirty..." autocomplete="off" />
+    <div id="input-area">
+      <input id="input" placeholder="Say something flirty..." autocomplete="off" />
       <button id="send-btn">Send</button>
     </div>
   </div>
+</div>
 
-  <script>
-    const messagesDiv = document.getElementById('messages');
-    const input = document.getElementById('input');
-    const sendBtn = document.getElementById('send-btn');
+<script>
+  const body = document.body;
+  const setupScreen = document.getElementById('setup-screen');
+  const chatContainer = document.getElementById('chat-container');
+  const messagesDiv = document.getElementById('messages');
+  const input = document.getElementById('input');
+  const sendBtn = document.getElementById('send-btn');
+  const startBtn = document.getElementById('start-btn');
+  const userNameInput = document.getElementById('user-name');
+  const crushNameInput = document.getElementById('crush-name');
+  const genderSelect = document.getElementById('gender-select');
+  const ageSelect = document.getElementById('age-select');
+  const backgroundFade = document.getElementById('background-fade');
 
-    function addMessage(text, sender) {
-      const msgDiv = document.createElement('div');
-      msgDiv.classList.add('message');
-      msgDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-      msgDiv.textContent = text;
-      messagesDiv.appendChild(msgDiv);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
+  let userName = '';
+  let crushName = '';
+  let gender = 'neutral';
+  let ageGroup = 'young';
 
-    async function sendMessage() {
-      const text = input.value.trim();
-      if (!text) return;
-      addMessage(text, 'user');
-      input.value = '';
-      addMessage('Typing...', 'bot');
+  const ageThemes = {
+    teen: { bgDark: '#3f3cbb', bgLight: '#6f6ad8' },
+    young: { bgDark: '#2c3e91', bgLight: '#5c6ac4' },
+    adult: { bgDark: '#1b1b3a', bgLight: '#3b2c82' },
+    senior: { bgDark: '#14142e', bgLight: '#2a265f' }
+  };
 
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ inputs: text }),
-        });
+  function setTheme() {
+    body.classList.remove('theme-boy', 'theme-girl', 'theme-neutral');
+    if (gender === 'boy') body.classList.add('theme-boy');
+    else if (gender === 'girl') body.classList.add('theme-girl');
+    else body.classList.add('theme-neutral');
 
-        const data = await res.json();
-        messagesDiv.lastChild.textContent = data[0]?.generated_text || 'Sorry, no response';
-      } catch (error) {
-        messagesDiv.lastChild.textContent = 'Error contacting AI.';
+    const theme = ageThemes[ageGroup];
+    if (!theme) return;
+    backgroundFade.style.background = theme.bgDark;
+    document.getElementById('app').style.background = theme.bgLight;
+  }
+
+  function addMessage(text, sender) {
+    const div = document.createElement('div');
+    div.classList.add('message');
+    div.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+    div.textContent = text;
+    messagesDiv.appendChild(div);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    addMessage(`${userName}: ${text}`, 'user');
+    input.value = '';
+    addMessage('Typing...', 'bot');
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ inputs: text })
+      });
+
+      const data = await res.json();
+
+      if (data.reply) {
+        messagesDiv.lastChild.textContent = `${crushName}: ${data.reply}`;
+      } else if (data.error) {
+        messagesDiv.lastChild.textContent = `${crushName}: Error - ${data.error}`;
+      } else {
+        messagesDiv.lastChild.textContent = `${crushName}: Sorry, no response.`;
       }
+    } catch (error) {
+      messagesDiv.lastChild.textContent = `${crushName}: Error contacting AI.`;
+    }
+  }
+
+  startBtn.addEventListener('click', () => {
+    userName = userNameInput.value.trim() || 'You';
+    crushName = crushNameInput.value.trim() || 'Crush';
+    gender = genderSelect.value;
+    ageGroup = ageSelect.value;
+
+    if (!userNameInput.value.trim() || !crushNameInput.value.trim()) {
+      alert('Please enter your name and your crush\'s name.');
+      return;
     }
 
-    sendBtn.addEventListener('click', sendMessage);
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') sendMessage();
-    });
-  </script>
+    setTheme();
+
+    setupScreen.style.display = 'none';
+    chatContainer.style.display = 'flex';
+
+    addMessage(`Hey ${userName}! You started a chat with ${crushName}. 💖`, 'bot');
+  });
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendMessage();
+  });
+</script>
 </body>
 </html>
