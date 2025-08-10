@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flirty AI Chat</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #5a47ab, #2a265f);
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    #chat-container {
+      width: 100%;
+      max-width: 500px;
+      background: #3b2c82;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(50, 40, 120, 0.8);
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+    }
+    #messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      padding-right: 10px;
+    }
+    .message {
+      margin: 8px 0;
+      padding: 10px 15px;
+      border-radius: 20px;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
+    .user-message {
+      background: #9c8de3;
+      align-self: flex-end;
+    }
+    .bot-message {
+      background: #7d68cc;
+      align-self: flex-start;
+    }
+    #input-container {
+      display: flex;
+    }
+    #input {
+      flex-grow: 1;
+      padding: 10px 15px;
+      border-radius: 20px 0 0 20px;
+      border: none;
+      font-size: 1rem;
+    }
+    #send-btn {
+      background: #a390e8;
+      border: none;
+      padding: 0 20px;
+      cursor: pointer;
+      border-radius: 0 20px 20px 0;
+      font-size: 1rem;
+      color: white;
+      transition: background 0.3s ease;
+    }
+    #send-btn:hover {
+      background: #8172d4;
+    }
+  </style>
+</head>
+<body>
+  <h1>Flirty AI Chat</h1>
+  <div id="chat-container">
+    <div id="messages"></div>
+    <div id="input-container">
+      <input type="text" id="input" placeholder="Say something flirty..." autocomplete="off" />
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const messagesDiv = document.getElementById('messages');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send-btn');
+
+    function addMessage(text, sender) {
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('message');
+      msgDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+      msgDiv.textContent = text;
+      messagesDiv.appendChild(msgDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+      addMessage(text, 'user');
+      input.value = '';
+      addMessage('Typing...', 'bot');
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ inputs: text }),
+        });
+
+        const data = await res.json();
+        messagesDiv.lastChild.textContent = data[0]?.generated_text || 'Sorry, no response';
+      } catch (error) {
+        messagesDiv.lastChild.textContent = 'Error contacting AI.';
+      }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>
