@@ -1,13 +1,11 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Only POST requests allowed' });
-    return;
+    return res.status(405).json({ error: 'Only POST requests allowed' });
   }
 
   const HF_API_TOKEN = process.env.HF_API_TOKEN;
   if (!HF_API_TOKEN) {
-    res.status(500).json({ error: 'Missing HF_API_TOKEN environment variable' });
-    return;
+    return res.status(500).json({ error: 'Missing HF_API_TOKEN environment variable' });
   }
 
   try {
@@ -25,13 +23,18 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const text = await response.text();
-      res.status(response.status).json({ error: text });
-      return;
+      return res.status(response.status).json({ error: text });
     }
 
     const data = await response.json();
-    res.status(200).json(data);
+
+    if (!data || !Array.isArray(data) || !data[0]?.generated_text) {
+      return res.status(200).json({ reply: "Sorry, I couldn't come up with a response." });
+    }
+
+    return res.status(200).json({ reply: data[0].generated_text });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
+
