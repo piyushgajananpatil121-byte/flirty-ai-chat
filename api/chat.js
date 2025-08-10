@@ -1,8 +1,6 @@
-import fetch from 'node-fetch';
-
-const HUGGINGFACE_API_TOKEN = process.env.HUGGINGFACE_API_TOKEN;
-
 export async function POST(request) {
+  const HUGGINGFACE_API_TOKEN = process.env.HUGGINGFACE_API_TOKEN;
+
   try {
     const { user, crush, gender, ageGroup, message } = await request.json();
 
@@ -53,4 +51,5 @@ Keep replies short, sweet, and appropriate.
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 }
+
 
