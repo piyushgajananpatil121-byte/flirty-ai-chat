@@ -1,15 +1,15 @@
 import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-  // Replace this with your frontend URL or use '*' for testing
-  const allowedOrigin = 'https://flirty-ai-chat-jvknbuh64-piyushs-projects-65115964.vercel.app';
+  const allowedOrigin = 'https://piyushgajananpatil121-byte.github.io';
 
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    // Preflight request
+    // Handle preflight request
     return res.status(200).end();
   }
 
@@ -51,6 +51,7 @@ export default async function handler(req, res) {
     res.status(500).json({ error: error.message || 'Internal Server Error' });
   }
 }
+
 
 
 
