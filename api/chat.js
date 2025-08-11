@@ -1,19 +1,19 @@
 export default async function handler(req, res) {
-  // --- CORS FIX (Allow All Origins) ---
+  // ---- CORS FIX ----
   res.setHeader('Access-Control-Allow-Origin', '*'); // allow all origins
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle preflight request
+  // Preflight request handling
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // --- Your API Logic ---
+  // ---- Your API logic ----
   try {
     const { message } = req.body;
 
-    // Example: Call your AI or chat logic here
+    // Example response (replace with AI logic)
     const reply = `AI Response: You said "${message}"`;
 
     res.status(200).json({ reply });
@@ -22,4 +22,5 @@ export default async function handler(req, res) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
 
