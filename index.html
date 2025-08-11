@@ -1,344 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Flirty AI Chat</title>
-<style>
-  :root {
-    --indigo-light: #5c6ac4;
-    --indigo-dark: #2c3e91;
-    --pink-light: #f48fb1;
-    --pink-dark: #ad1457;
-    --blue-light: #4fc3f7;
-    --blue-dark: #1565c0;
-    --text-light: #f0eafc;
-    --text-dark: #1c1f3b;
-    --bg-light: #ede7f6;
-    --bg-dark: #1b1b3a;
-  }
-
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--indigo-dark);
-    color: var(--text-light);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.7s ease;
-    user-select: none;
-  }
-
-  body.theme-boy {
-    --main-bg: var(--blue-dark);
-    --main-bg-light: var(--blue-light);
-    --msg-user-bg: #1976d2;
-    --msg-bot-bg: #90caf9;
-    --text-color: var(--text-light);
-  }
-  body.theme-girl {
-    --main-bg: var(--pink-dark);
-    --main-bg-light: var(--pink-light);
-    --msg-user-bg: #d81b60;
-    --msg-bot-bg: #f48fb1;
-    --text-color: var(--text-light);
-  }
-  body.theme-neutral {
-    --main-bg: var(--indigo-dark);
-    --main-bg-light: var(--indigo-light);
-    --msg-user-bg: #5c6ac4;
-    --msg-bot-bg: #9fa8da;
-    --text-color: var(--text-light);
-  }
-
-  #background-fade {
-    position: fixed;
-    inset: 0;
-    background: var(--main-bg);
-    transition: background 0.7s ease;
-    z-index: -1;
-  }
-
-  #app {
-    background: var(--main-bg-light);
-    border-radius: 16px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.25);
-    width: 90vw;
-    max-width: 480px;
-    height: 600px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    color: var(--text-color);
-  }
-
-  #setup-screen {
-    padding: 20px;
-    flex-shrink: 0;
-  }
-  #setup-screen h2 {
-    margin: 0 0 12px;
-    text-align: center;
-  }
-  #setup-screen label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
-  #setup-screen input, #setup-screen select {
-    width: 100%;
-    padding: 10px 12px;
-    margin-bottom: 16px;
-    border-radius: 8px;
-    border: none;
-    font-size: 1rem;
-    outline-offset: 2px;
-  }
-  #setup-screen button {
-    width: 100%;
-    background: var(--msg-user-bg);
-    border: none;
-    padding: 12px 0;
-    border-radius: 8px;
-    color: var(--text-color);
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  #setup-screen button:hover {
-    filter: brightness(1.1);
-  }
-
-  #chat-container {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 16px 12px;
-    background: var(--main-bg);
-  }
-
-  #messages {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 10px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--msg-user-bg) transparent;
-  }
-  #messages::-webkit-scrollbar {
-    width: 6px;
-  }
-  #messages::-webkit-scrollbar-thumb {
-    background-color: var(--msg-user-bg);
-    border-radius: 3px;
-  }
-
-  .message {
-    max-width: 70%;
-    padding: 12px 18px;
-    margin: 8px 0;
-    border-radius: 30px;
-    word-wrap: break-word;
-    font-size: 1rem;
-    line-height: 1.3;
-  }
-  .user-message {
-    align-self: flex-end;
-    background: var(--msg-user-bg);
-    color: var(--text-color);
-    border-bottom-right-radius: 4px;
-  }
-  .bot-message {
-    align-self: flex-start;
-    background: var(--msg-bot-bg);
-    color: var(--text-color);
-    border-bottom-left-radius: 4px;
-  }
-
-  #input-area {
-    display: flex;
-    padding: 10px 12px;
-    background: var(--main-bg-light);
-    border-top: 1px solid rgba(255 255 255 / 0.15);
-  }
-  #input {
-    flex-grow: 1;
-    padding: 10px 16px;
-    font-size: 1.1rem;
-    border-radius: 30px 0 0 30px;
-    border: none;
-    outline-offset: 2px;
-  }
-  #send-btn {
-    padding: 10px 20px;
-    background: var(--msg-user-bg);
-    border: none;
-    color: var(--text-color);
-    font-weight: 700;
-    font-size: 1.1rem;
-    border-radius: 0 30px 30px 0;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  #send-btn:hover {
-    filter: brightness(1.1);
-  }
-
-  @media (max-width: 500px) {
-    #app {
-      height: 90vh;
-      max-width: 95vw;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flirty AI Chat</title>
+  <style>
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
     }
-  }
-</style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #3f51b5, #1a237e);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    h1 {
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: 700;
+      text-shadow: 0 0 10px #7986cb;
+    }
+
+    /* Container */
+    #app {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(30, 33, 70, 0.9);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(63, 81, 181, 0.7);
+      overflow: hidden;
+    }
+
+    /* Settings Panel */
+    #settings {
+      padding: 1rem;
+      background: #283593;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+    }
+    label {
+      flex: 1 1 120px;
+      font-weight: 600;
+      user-select: none;
+    }
+    select, input[type="text"] {
+      flex: 2 1 180px;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      box-shadow: inset 0 0 6px #3949ab;
+      background: #3949ab;
+      color: #eee;
+      transition: background 0.3s ease;
+    }
+    select:hover, input[type="text"]:hover, select:focus, input[type="text"]:focus {
+      background: #5c6bc0;
+    }
+
+    /* Chat Window */
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      background: #1a237e;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Message styles */
+    .message {
+      max-width: 80%;
+      padding: 0.6rem 1rem;
+      border-radius: 20px;
+      line-height: 1.3;
+      font-size: 1rem;
+      word-wrap: break-word;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .message.user {
+      background: #7986cb;
+      color: #1a237e;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+      text-align: right;
+    }
+    .message.crush {
+      background: #c5cae9;
+      color: #283593;
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+      font-style: italic;
+    }
+
+    /* Input Panel */
+    #inputPanel {
+      display: flex;
+      background: #283593;
+      padding: 0.8rem 1rem;
+    }
+    #inputMessage {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+      border-radius: 25px;
+      border: none;
+      outline: none;
+      background: #3949ab;
+      color: #eee;
+      box-shadow: inset 0 0 6px #3949ab;
+      transition: background 0.3s ease;
+    }
+    #inputMessage:focus {
+      background: #5c6bc0;
+    }
+    #sendBtn {
+      margin-left: 0.8rem;
+      background: #536dfe;
+      border: none;
+      border-radius: 25px;
+      padding: 0 1.2rem;
+      cursor: pointer;
+      color: #eee;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: background 0.3s ease;
+      box-shadow: 0 2px 8px #536dfeaa;
+    }
+    #sendBtn:hover {
+      background: #3d5afe;
+    }
+    #sendBtn:disabled {
+      background: #7986cb;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    /* Scrollbar */
+    #chat::-webkit-scrollbar {
+      width: 8px;
+    }
+    #chat::-webkit-scrollbar-thumb {
+      background: #5c6bc0;
+      border-radius: 8px;
+    }
+    #chat::-webkit-scrollbar-track {
+      background: #1a237e;
+    }
+  </style>
 </head>
 <body>
-<div id="background-fade"></div>
 
-<div id="app">
-  <div id="setup-screen">
-    <h2>Welcome to Flirty AI Chat</h2>
+  <h1>Flirty AI Chat</h1>
 
-    <label for="user-name">Your Name:</label>
-    <input id="user-name" type="text" placeholder="Enter your name" autocomplete="off" />
+  <div id="app">
+    <section id="settings">
+      <label for="userName">Your Name:</label>
+      <input type="text" id="userName" placeholder="Enter your name" autocomplete="off" />
 
-    <label for="crush-name">Crush's Name:</label>
-    <input id="crush-name" type="text" placeholder="Enter your crush's name" autocomplete="off" />
+      <label for="crushName">Crush Name:</label>
+      <input type="text" id="crushName" placeholder="Enter crush's name" autocomplete="off" />
 
-    <label for="gender-select">Select Your Gender:</label>
-    <select id="gender-select">
-      <option value="girl">Girl</option>
-      <option value="boy">Boy</option>
-      <option value="neutral">Neutral</option>
-    </select>
+      <label for="gender">Gender:</label>
+      <select id="gender">
+        <option value="girl">Girl</option>
+        <option value="boy">Boy</option>
+      </select>
 
-    <label for="age-select">Select Your Age Group:</label>
-    <select id="age-select">
-      <option value="teen">Teen (13-19)</option>
-      <option value="young">Young Adult (20-30)</option>
-      <option value="adult">Adult (31-50)</option>
-      <option value="senior">Senior (50+)</option>
-    </select>
+      <label for="ageGroup">Age Group:</label>
+      <select id="ageGroup">
+        <option value="teens">Teens</option>
+        <option value="20s">20s</option>
+        <option value="30s">30s+</option>
+      </select>
+    </section>
 
-    <button id="start-btn">Start Chatting</button>
+    <section id="chat"></section>
+
+    <form id="inputPanel">
+      <input
+        type="text"
+        id="inputMessage"
+        placeholder="Type your message here..."
+        autocomplete="off"
+        required
+        maxlength="300"
+      />
+      <button id="sendBtn" type="submit">Send</button>
+    </form>
   </div>
-
-  <div id="chat-container" style="display:none;">
-    <div id="messages"></div>
-    <div id="input-area">
-      <input id="input" placeholder="Say something flirty..." autocomplete="off" />
-      <button id="send-btn">Send</button>
-    </div>
-  </div>
-</div>
 
 <script>
-  const body = document.body;
-  const setupScreen = document.getElementById('setup-screen');
-  const chatContainer = document.getElementById('chat-container');
-  const messagesDiv = document.getElementById('messages');
-  const input = document.getElementById('input');
-  const sendBtn = document.getElementById('send-btn');
-  const startBtn = document.getElementById('start-btn');
-  const userNameInput = document.getElementById('user-name');
-  const crushNameInput = document.getElementById('crush-name');
-  const genderSelect = document.getElementById('gender-select');
-  const ageSelect = document.getElementById('age-select');
-  const backgroundFade = document.getElementById('background-fade');
+  const chat = document.getElementById('chat');
+  const sendBtn = document.getElementById('sendBtn');
+  const inputMessage = document.getElementById('inputMessage');
 
-  let userName = '';
-  let crushName = '';
-  let gender = 'neutral';
-  let ageGroup = 'young';
+  const userNameInput = document.getElementById('userName');
+  const crushNameInput = document.getElementById('crushName');
+  const genderSelect = document.getElementById('gender');
+  const ageGroupSelect = document.getElementById('ageGroup');
 
-  const ageThemes = {
-    teen: { bgDark: '#3f3cbb', bgLight: '#6f6ad8' },
-    young: { bgDark: '#2c3e91', bgLight: '#5c6ac4' },
-    adult: { bgDark: '#1b1b3a', bgLight: '#3b2c82' },
-    senior: { bgDark: '#14142e', bgLight: '#2a265f' }
-  };
-
-  function setTheme() {
-    body.classList.remove('theme-boy', 'theme-girl', 'theme-neutral');
-    if (gender === 'boy') body.classList.add('theme-boy');
-    else if (gender === 'girl') body.classList.add('theme-girl');
-    else body.classList.add('theme-neutral');
-
-    const theme = ageThemes[ageGroup];
-    if (!theme) return;
-    backgroundFade.style.background = theme.bgDark;
-    document.getElementById('app').style.background = theme.bgLight;
-  }
-
-  function addMessage(text, sender) {
+  function appendMessage(text, sender) {
     const div = document.createElement('div');
-    div.classList.add('message');
-    div.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+    div.classList.add('message', sender);
     div.textContent = text;
-    messagesDiv.appendChild(div);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
   }
 
-  async function sendMessage() {
-    const text = input.value.trim();
-    if (!text) return;
-    addMessage(`${userName}: ${text}`, 'user');
-    input.value = '';
-    addMessage('Typing...', 'bot');
+  async function sendMessage(message) {
+    const user = userNameInput.value.trim() || 'You';
+    const crush = crushNameInput.value.trim() || 'Crush';
+    const gender = genderSelect.value;
+    const ageGroup = ageGroupSelect.value;
+
+    appendMessage(message, 'user');
+    inputMessage.value = '';
+    sendBtn.disabled = true;
 
     try {
-      const res = await fetch('/api/chat', {
+      // Replace this URL with your backend deployed URL
+      const response = await fetch('https://your-vercel-project.vercel.app/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user: userName,
-          crush: crushName,
-          gender: gender,
-          ageGroup: ageGroup,
-          message: text
-        })
+        body: JSON.stringify({ user, crush, gender, ageGroup, message }),
       });
 
-      const data = await res.json();
-
-      if (data.reply) {
-        messagesDiv.lastChild.textContent = `${crushName}: ${data.reply}`;
-      } else if (data.error) {
-        messagesDiv.lastChild.textContent = `${crushName}: Error - ${data.error}`;
-      } else {
-        messagesDiv.lastChild.textContent = `${crushName}: Sorry, no response.`;
+      if (!response.ok) {
+        appendMessage("Sorry, I couldn't get a response. Try again!", 'crush');
+        sendBtn.disabled = false;
+        return;
       }
+
+      const data = await response.json();
+      appendMessage(data.reply || "Hmm... no reply this time.", 'crush');
     } catch (error) {
-      messagesDiv.lastChild.textContent = `${crushName}: Error contacting AI.`;
+      appendMessage("Oops! Something went wrong.", 'crush');
+      console.error(error);
     }
+
+    sendBtn.disabled = false;
   }
 
-  startBtn.addEventListener('click', () => {
-    userName = userNameInput.value.trim() || 'You';
-    crushName = crushNameInput.value.trim() || 'Crush';
-    gender = genderSelect.value;
-    ageGroup = ageSelect.value;
-
-    if (!userNameInput.value.trim() || !crushNameInput.value.trim()) {
-      alert('Please enter your name and your crush\'s name.');
-      return;
+  document.getElementById('inputPanel').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = inputMessage.value.trim();
+    if (message.length > 0) {
+      sendMessage(message);
     }
-
-    setTheme();
-
-    setupScreen.style.display = 'none';
-    chatContainer.style.display = 'flex';
-
-    addMessage(`Hey ${userName}! You started a chat with ${crushName}. 💖`, 'bot');
   });
 
-  sendBtn.addEventListener('click', sendMessage);
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter') sendMessage();
-  });
 </script>
+
 </body>
 </html>
+
