@@ -2,10 +2,7 @@
   "name": "flirty-ai-chat-backend",
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-    "start": "vercel dev"
-  },
   "dependencies": {
-    "node-fetch": "^3.3.1"
+    "node-fetch": "^3.3.2"
   }
 }
