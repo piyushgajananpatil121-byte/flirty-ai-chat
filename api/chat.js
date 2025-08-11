@@ -8,12 +8,7 @@ export async function POST(request) {
       return new Response(JSON.stringify({ error: 'No message provided' }), { status: 400 });
     }
 
-    const prompt = `
-You are ${crush}, a flirty ${gender} AI chat companion chatting with ${user} who is in the ${ageGroup} age group.
-Respond in a playful, flirty, and engaging way to the message:
-"${message}"
-Keep replies short, sweet, and appropriate.
-`;
+    const prompt = `You are ${crush}, a flirty ${gender} AI chat companion chatting with ${user} who is in the ${ageGroup} age group. Respond in a playful, flirty, and engaging way to the message: "${message}" Keep replies short, sweet, and appropriate.`;
 
     const response = await fetch('https://api-inference.huggingface.co/models/gpt2', {
       method: 'POST',
@@ -51,5 +46,3 @@ Keep replies short, sweet, and appropriate.
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 }
-
-
