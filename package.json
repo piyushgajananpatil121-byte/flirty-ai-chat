@@ -1,7 +1,7 @@
 {
-  "name": "flirty-ai-proxy",
-  "version": "1.0.0",
-  "main": "api/chat.js",
-  "license": "MIT",
-  "dependencies": {}
+  "type": "module",
+  "dependencies": {
+    "node-fetch": "^3.0.0"
+  }
 }
+
