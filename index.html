@@ -4,22 +4,43 @@
   <title>Flirty AI Chat</title>
 </head>
 <body>
-  <h1>Flirty AI Chat</h1>
-  <input id="message" placeholder="Type your message">
-  <button onclick="sendMessage()">Send</button>
-  <pre id="output"></pre>
+  <input type="text" id="userInput" placeholder="Say something..." />
+  <button id="sendBtn">Send</button>
+  <div id="chat"></div>
 
   <script>
-  async function sendMessage() {
-    const message = document.getElementById("message").value;
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message })
+    const backendURL = '/api/chat'; // Use relative path in same deployment
+
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      try {
+        const res = await fetch(backendURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: msg })
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        document.getElementById("chat").innerHTML += `<p><b>You:</b> ${msg}</p>`;
+        document.getElementById("chat").innerHTML += `<p><b>Bot:</b> ${data.reply}</p>`;
+        input.value = "";
+      } catch (err) {
+        console.error("Fetch error", err);
+      }
+    }
+
+    document.getElementById("sendBtn").addEventListener("click", sendMessage);
+    document.getElementById("userInput").addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
     });
-    const data = await res.json();
-    document.getElementById("output").textContent = JSON.stringify(data, null, 2);
-  }
   </script>
 </body>
 </html>
+
