@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Flirty AI Chat</title>
 <style>
-  /* Indigo & blue theme with gradient backgrounds */
   body {
     margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #3f51b5, #1a237e);
@@ -19,7 +18,7 @@
     text-shadow: 1px 1px 5px #283593;
   }
   form {
-    background: #283593cc; /* semi-transparent indigo */
+    background: #283593cc;
     padding: 20px; border-radius: 12px;
     width: 350px; max-width: 90vw;
     box-shadow: 0 4px 15px rgba(63,81,181,0.6);
@@ -125,7 +124,7 @@
   const form = document.getElementById('chat-form');
   const chatBox = document.getElementById('chat-box');
 
-  // **Replace this URL with your deployed Vercel backend API URL!**
+  // Use your real backend API URL here:
   const backendUrl = 'https://flirty-ai-chat-jvknbuh64-piyushs-projects-65115964.vercel.app/api/chat';
 
   function addMessage(text, isUser = true) {
