@@ -1,179 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Flirty AI Chat</title>
-<style>
-  body {
-    margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #3f51b5, #1a237e);
-    color: #eee;
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-  }
-  header {
-    margin: 20px; font-size: 2.5rem; font-weight: bold; letter-spacing: 2px;
-    color: #c5cae9;
-    text-shadow: 1px 1px 5px #283593;
-  }
-  form {
-    background: #283593cc;
-    padding: 20px; border-radius: 12px;
-    width: 350px; max-width: 90vw;
-    box-shadow: 0 4px 15px rgba(63,81,181,0.6);
-  }
-  label {
-    display: block; margin-top: 10px; font-weight: 600; color: #c5cae9;
-  }
-  select, input[type="text"], textarea {
-    width: 100%; padding: 10px; margin-top: 6px;
-    border-radius: 6px; border: none;
-    font-size: 1rem;
-    outline: none;
-  }
-  select {
-    background: #3949ab;
-    color: white;
-  }
-  input[type="text"], textarea {
-    background: #1a237e;
-    color: #c5cae9;
-  }
-  button {
-    margin-top: 15px;
-    background: #7986cb;
-    border: none;
-    padding: 12px 20px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #1a237e;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 100%;
-    transition: background 0.3s ease;
-  }
-  button:hover {
-    background: #5c6bc0;
-  }
-  #chat-box {
-    margin-top: 30px; width: 350px; max-width: 90vw;
-    background: #303f9f;
-    border-radius: 12px;
-    padding: 15px;
-    max-height: 400px;
-    overflow-y: auto;
-    box-shadow: 0 4px 15px rgba(63,81,181,0.8);
-  }
-  .message {
-    margin-bottom: 15px;
-    padding: 10px 14px;
-    border-radius: 14px;
-    max-width: 80%;
-    word-wrap: break-word;
-  }
-  .user-msg {
-    background: #7986cb;
-    color: #1a237e;
-    align-self: flex-end;
-    margin-left: auto;
-  }
-  .bot-msg {
-    background: #c5cae9;
-    color: #1a237e;
-    align-self: flex-start;
-    margin-right: auto;
-  }
-</style>
+  <title>Flirty AI Chat</title>
 </head>
 <body>
-  <header>Flirty AI Chat</header>
-  
-  <form id="chat-form">
-    <label for="user-name">Your Name</label>
-    <input type="text" id="user-name" placeholder="Enter your name" required />
+  <h1>Flirty AI Chat</h1>
 
-    <label for="crush-name">Crush's Name</label>
-    <input type="text" id="crush-name" placeholder="Enter crush's name" required />
+  <input id="user" placeholder="Your Name">
+  <input id="crush" placeholder="Crush's Name">
+  <input id="gender" placeholder="Crush's Gender">
+  <input id="ageGroup" placeholder="Age Group">
+  <input id="message" placeholder="Your Message">
+  <button onclick="sendMessage()">Send</button>
 
-    <label for="gender">Choose Crush's Gender</label>
-    <select id="gender" required>
-      <option value="" disabled selected>Select gender</option>
-      <option value="female">Female</option>
-      <option value="male">Male</option>
-      <option value="non-binary">Non-binary</option>
-    </select>
+  <div id="reply"></div>
 
-    <label for="age-group">Age Group</label>
-    <select id="age-group" required>
-      <option value="" disabled selected>Select age group</option>
-      <option value="teen">Teen (13-19)</option>
-      <option value="young adult">Young Adult (20-29)</option>
-      <option value="adult">Adult (30+)</option>
-    </select>
+  <script>
+    async function sendMessage() {
+      const user = document.getElementById('user').value;
+      const crush = document.getElementById('crush').value;
+      const gender = document.getElementById('gender').value;
+      const ageGroup = document.getElementById('ageGroup').value;
+      const message = document.getElementById('message').value;
 
-    <label for="message">Your Message</label>
-    <textarea id="message" placeholder="Type your message here..." rows="3" required></textarea>
-
-    <button type="submit">Send</button>
-  </form>
-
-  <div id="chat-box"></div>
-
-<script>
-  const form = document.getElementById('chat-form');
-  const chatBox = document.getElementById('chat-box');
-
-  // Use your real backend API URL here:
-  const backendUrl = 'https://flirty-ai-chat-jvknbuh64-piyushs-projects-65115964.vercel.app/api/chat';
-
-  function addMessage(text, isUser = true) {
-    const div = document.createElement('div');
-    div.classList.add('message');
-    div.classList.add(isUser ? 'user-msg' : 'bot-msg');
-    div.textContent = text;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const user = document.getElementById('user-name').value.trim();
-    const crush = document.getElementById('crush-name').value.trim();
-    const gender = document.getElementById('gender').value;
-    const ageGroup = document.getElementById('age-group').value;
-    const message = document.getElementById('message').value.trim();
-
-    if (!user || !crush || !gender || !ageGroup || !message) return alert('Please fill all fields.');
-
-    addMessage(`You: ${message}`, true);
-
-    form.querySelector('button').disabled = true;
-    form.querySelector('button').textContent = 'Thinking...';
-
-    try {
-      const response = await fetch(backendUrl, {
+      const res = await fetch('https://flirty-ai-chat-jvknbuh64-piyushs-projects-65115964.vercel.app/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user, crush, gender, ageGroup, message }),
+        body: JSON.stringify({ user, crush, gender, ageGroup, message })
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Server error');
-      }
-
-      const data = await response.json();
-      addMessage(`${crush}: ${data.reply}`, false);
-    } catch (err) {
-      addMessage(`Crush: Sorry, I couldn't process that. (${err.message})`, false);
-    } finally {
-      form.querySelector('button').disabled = false;
-      form.querySelector('button').textContent = 'Send';
-      document.getElementById('message').value = '';
+      const data = await res.json();
+      document.getElementById('reply').innerText = data.reply || data.error;
     }
-  });
-</script>
+  </script>
 </body>
 </html>
